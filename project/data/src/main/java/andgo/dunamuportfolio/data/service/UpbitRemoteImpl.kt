@@ -17,7 +17,7 @@ internal class UpbitRemoteImpl @Inject constructor(
         get() = upbitService.events.map(eventMapper::toSocketEvent)
 
     override val upbitModel: Flow<UpbitCoinRemoteModel>
-        get() = upbitService.upbitPriceInfo
+        get() = upbitService.coinResponse
 
     override fun subscribe(data: SubscribeData) {
         upbitService.subscribe(data.params)

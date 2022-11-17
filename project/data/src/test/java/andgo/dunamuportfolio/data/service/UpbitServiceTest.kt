@@ -70,7 +70,7 @@ class UpbitServiceTest {
     fun `when stock info is requested then the correct data is returned`() = runTest {
         // Given
         val scarletStockService = mock<UpbitService> {
-            on { upbitPriceInfo } doReturn flowOf(
+            on { coinResponse } doReturn flowOf(
                 UpbitCoinRemoteModel(price = 8999.22),
             )
         }

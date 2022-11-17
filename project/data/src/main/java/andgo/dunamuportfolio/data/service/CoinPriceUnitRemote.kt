@@ -1,6 +1,6 @@
 package andgo.dunamuportfolio.data.service
 
-enum class CoinUnit(val value: String) {
+enum class CoinPriceUnitRemote(val value: String) {
     KRW("KRW"),
     BTC("BTC"),
     USDT("USDT")

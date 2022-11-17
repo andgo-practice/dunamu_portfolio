@@ -1,7 +1,7 @@
 package andgo.dunamuportfolio.data.service
 
 
-enum class Coin(
+enum class CoinTypeRemote(
     val coinCode: String,
     val coinName: String
 ) {
@@ -13,6 +13,6 @@ enum class Coin(
     FLOW("FLOW", "플로우");
 }
 
-fun createCoinParams(unit: CoinUnit): List<String> {
-    return Coin.values().map { "${unit.value}-${it.coinCode}" }.toList()
+fun List<CoinTypeRemote>.toRequestParams(unit: CoinPriceUnitRemote): List<String> {
+    return this.map { "${unit.value}-${it.coinCode}" }.toList()
 }

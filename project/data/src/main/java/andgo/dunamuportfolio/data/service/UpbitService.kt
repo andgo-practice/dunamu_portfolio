@@ -12,7 +12,7 @@ internal interface UpbitService {
     val events: Flow<WebSocket.Event>
 
     @get:Receive
-    val upbitPriceInfo: Flow<UpbitCoinRemoteModel>
+    val coinResponse: Flow<UpbitCoinRemoteModel>
 
     @Send
     fun subscribe(params: List<Any>)

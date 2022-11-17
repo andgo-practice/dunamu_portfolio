@@ -1,43 +1,38 @@
 package andgo.dunamuportfolio.ui
 
-import andgo.dunamuportfolio.domain.UpbitRepository
-import android.util.Log
+import andgo.dunamuportfolio.domain.model.CoinPriceUnit
+import andgo.dunamuportfolio.domain.model.CoinType
+import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
+import andgo.dunamuportfolio.domain.usecase.GetCoinPriceUseCase
+import andgo.dunamuportfolio.domain.usecase.SubscribeCoinUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val upbitRepository: UpbitRepository
+    private val getCoinPriceUseCase: GetCoinPriceUseCase,
+    private val subscribeCoinUseCase: SubscribeCoinUseCase
 ) : ViewModel() {
 
-    fun subscribe() {
+    // TODO 이런 방식이 아닌 ui state로 대응
+    private val selectedCoinPriceUnit = MutableStateFlow(CoinPriceUnit.KRW)
+        .onEach { subscribe(it) }
+
+    private val coinModelFlow = getCoinPriceUseCase(Unit)
+
+    private fun subscribe(coinPriceUnit: CoinPriceUnit) {
         viewModelScope.launch {
-
-            launch {
-                delay(5000)
-                upbitRepository.subscribe()
-            }
-
-            launch {
-                upbitRepository.response.collect {
-                    Log.d("test", "$it")
-                }
-
-                upbitRepository.event.distinctUntilChanged().collect {
-                    Log.d("test", it)
-                }
-            }
-
+            subscribeCoinUseCase(
+                CoinSubscribeParam(
+                    coinTypeParams = CoinType.values().toList(),
+                    coinPriceUnit = coinPriceUnit
+                )
+            )
         }
-
-
     }
 }
