@@ -5,6 +5,7 @@ import andgo.dunamuportfolio.domain.model.mockPriceList
 import andgo.dunamuportfolio.ui.CoinPriceList
 import andgo.dunamuportfolio.ui.theme.DunamuPortfolioTheme
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,14 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CoinPriceFragment : Fragment() {
+
+    private val viewModel: CoinPriceViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.setUnit(CoinPriceUnit.KRW)
+
         return ComposeView(requireContext()).apply {
             setContent {
                 DunamuPortfolioTheme {
