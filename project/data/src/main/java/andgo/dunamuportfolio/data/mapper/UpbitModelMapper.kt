@@ -10,8 +10,9 @@ fun UpbitCoinRemoteModel.toUpbitCoinModel(): UpbitCoinModel? {
         UpbitCoinModel(
             type = coinType,
             tradePrice = tradePrice,
-            changeRate = changeRate,
-            accTradeVolume = accTradeVolume,
+            changeRate = signedChangeRate * 100,
+            changePrice = signedChangePrice,
+            accTradePricePerMillion = accTradePrice24H / 1000000,
             changeStatus = when(change) {
                 "RISE" -> ChangeStatus.UP
                 "FALL" -> ChangeStatus.DOWN

@@ -5,7 +5,6 @@ import andgo.dunamuportfolio.domain.model.mockPriceList
 import andgo.dunamuportfolio.ui.CoinPriceList
 import andgo.dunamuportfolio.ui.theme.DunamuPortfolioTheme
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,19 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CoinPriceFragment : Fragment() {
-
     private val viewModel: CoinPriceViewModel by viewModels()
 
     override fun onCreateView(
@@ -33,6 +29,7 @@ class CoinPriceFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // TODO ViewPager로부터 값을 받아와야함.
         viewModel.setUnit(CoinPriceUnit.KRW)
 
         return ComposeView(requireContext()).apply {
@@ -42,7 +39,10 @@ class CoinPriceFragment : Fragment() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colors.background
                     ) {
-                        CoinPriceList(unit = CoinPriceUnit.KRW, list = mockPriceList)
+                        CoinPriceList(
+                            unit = CoinPriceUnit.KRW,
+                            coinPriceList = viewModel.uiState.collectAsState().value.coinPriceList
+                        )
                     }
                 }
             }
@@ -54,6 +54,6 @@ class CoinPriceFragment : Fragment() {
 @Composable
 fun CoinPriceFragmentPreview() {
     DunamuPortfolioTheme {
-        CoinPriceList(unit = CoinPriceUnit.KRW, list = mockPriceList)
+        CoinPriceList(unit = CoinPriceUnit.KRW, coinPriceList = mockPriceList)
     }
 }

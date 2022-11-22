@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.lang.Math.abs
 
 @Composable
 fun CoinPriceItem(
@@ -57,21 +58,44 @@ fun CoinPriceItem(
             else String.format("%,d", coin.tradePrice.toInt())
         )
 
-        Text(
+        Column(
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.End,
-            style = TextStyle(
-                fontSize = 13.sp,
-                color = getColor(coin.changeRate)
-            ),
-            text = "${String.format("%.2f", coin.changeRate)}%"
-        )
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                textAlign = TextAlign.End,
+                style = TextStyle(
+                    fontSize = 13.sp,
+                    color = getColor(coin.changeRate)
+                ),
+                text = "${String.format("%.2f", coin.changeRate)}%"
+            )
+            Text(
+                textAlign = TextAlign.End,
+                style = TextStyle(
+                    fontSize = 13.sp,
+                    color = getColor(coin.changeRate)
+                ),
+                text = when {
+                    kotlin.math.abs(coin.changePrice) >= 100 -> String.format(
+                        "%,d",
+                        coin.changePrice.toInt()
+                    )
+                    kotlin.math.abs(coin.changePrice) < 100 && kotlin.math.abs(coin.changePrice) >= 1 -> String.format(
+                        "%.2f",
+                        coin.changePrice
+                    )
+                    else -> String.format("%.4f", coin.changePrice)
+                }
+            )
+        }
+
 
         Text(
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.End,
             style = TextStyle(fontSize = 11.sp),
-            text = "${String.format("%,d", coin.accTradeVolume.toInt())}백만"
+            text = "${String.format("%,d", coin.accTradePricePerMillion.toInt())}백만"
         )
     }
 }

@@ -5,32 +5,44 @@ import andgo.dunamuportfolio.domain.model.CoinType
 import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
 import andgo.dunamuportfolio.domain.usecase.GetCoinPriceUseCase
 import andgo.dunamuportfolio.domain.usecase.SubscribeCoinUseCase
-import android.util.Log
+import andgo.dunamuportfolio.domain.usecase.core.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CoinPriceViewModel @Inject constructor(
+    private val uiStateProvider: CoinPriceUiStateProvider,
     private val getCoinPriceUseCase: GetCoinPriceUseCase,
     private val subscribeCoinUseCase: SubscribeCoinUseCase
 ) : ViewModel() {
 
-    // TODO 이런 방식이 아닌 ui state로 대응
+    init {
+        observeCoinPrice()
+    }
+
+    private fun observeCoinPrice() {
+        viewModelScope.launch {
+            getCoinPriceUseCase(Unit)
+                .mapNotNull { it.data }
+                .map(uiStateProvider::updateAndCreateUiState)
+                .collect { _uiState.emit(it) }
+        }
+    }
+
+    private val _uiState = MutableStateFlow(uiStateProvider.initialUiState)
+    val uiState get() = _uiState.asStateFlow()
+
+    // TODO 정렬시 개선 예정입니다.
     private val selectedCoinPriceUnit: MutableStateFlow<CoinPriceUnit> =
         MutableStateFlow(CoinPriceUnit.KRW)
             .apply {
-                onEach { subscribe(it) }
-                    .launchIn(viewModelScope)
+                onEach { requestCoinList(it) }.launchIn(viewModelScope)
             }
-
-    val coinModelFlow = getCoinPriceUseCase(Unit)
 
     fun setUnit(coinPriceUnit: CoinPriceUnit) {
         viewModelScope.launch {
@@ -38,9 +50,10 @@ class CoinPriceViewModel @Inject constructor(
         }
     }
 
-    private fun subscribe(coinPriceUnit: CoinPriceUnit) {
+    private fun requestCoinList(coinPriceUnit: CoinPriceUnit) {
         viewModelScope.launch {
             delay(5000) // TODO websocketEvent가 오기전까진 delay로 대응
+
             subscribeCoinUseCase(
                 CoinSubscribeParam(
                     coinTypeParams = CoinType.values().toList(),
