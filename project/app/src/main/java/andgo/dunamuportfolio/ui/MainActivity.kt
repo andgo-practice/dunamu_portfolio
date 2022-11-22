@@ -2,12 +2,14 @@ package andgo.dunamuportfolio.ui
 
 import andgo.dunamuportfolio.domain.model.CoinPriceUnit
 import andgo.dunamuportfolio.domain.model.mockPriceList
+import andgo.dunamuportfolio.ui.price.CoinPriceSortMenuBar
 import andgo.dunamuportfolio.ui.price.CoinPriceViewModel
 import andgo.dunamuportfolio.ui.theme.DunamuPortfolioTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -30,10 +32,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    CoinPriceList(
-                        unit = CoinPriceUnit.KRW,
-                        coinPriceList = viewModel.uiState.collectAsState().value.coinPriceList
-                    )
+                    Column {
+                        CoinPriceSortMenuBar(isKoreanMode = true)
+                        CoinPriceList(
+                            unit = CoinPriceUnit.KRW,
+                            coinPriceList = viewModel.uiState.collectAsState().value.coinPriceList
+                        )
+                    }
                 }
             }
         }
@@ -44,6 +49,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainActivityPreview() {
     DunamuPortfolioTheme {
-        CoinPriceList(unit = CoinPriceUnit.KRW, coinPriceList = mockPriceList)
+        Column {
+            CoinPriceSortMenuBar(isKoreanMode = true)
+            CoinPriceList(
+                unit = CoinPriceUnit.KRW,
+                coinPriceList = mockPriceList
+            )
+        }
     }
 }
