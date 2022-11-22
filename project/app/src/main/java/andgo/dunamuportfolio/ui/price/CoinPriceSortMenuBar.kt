@@ -97,7 +97,7 @@ fun SortButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CoinPriceSortMenuBarPreview() {
     CoinPriceSortMenuBar(isKoreanMode = true, sortType = SortType.TRADE)
