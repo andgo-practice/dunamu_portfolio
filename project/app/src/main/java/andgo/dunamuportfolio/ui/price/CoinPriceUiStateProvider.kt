@@ -1,43 +1,66 @@
 package andgo.dunamuportfolio.ui.price
 
-import andgo.dunamuportfolio.domain.model.ChangeStatus
-import andgo.dunamuportfolio.domain.model.CoinType
+import andgo.dunamuportfolio.domain.model.SortType
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
 import javax.inject.Inject
 
-class CoinPriceUiStateProvider @Inject constructor() {
-    private val coinPriceMap = mutableMapOf<CoinType, UpbitCoinModel>()
+class CoinPriceUiStateProvider @Inject constructor(
+    private val coinPriceListProvider: CoinPriceListProvider,
+    private val coinPriceHeaderProvider: CoinPriceHeaderProvider
+) {
+    var lastUiState = initialUiState // TODO 이걸 여기서 관리안하는 형태 고려
 
     val initialUiState: CoinPriceUiState
         get() = createInitialUiState()
 
-    init {
-        initialPriceMap()
-    }
+    private fun createInitialUiState() = CoinPriceUiState(
+        coinPriceList = coinPriceListProvider.initialPriceList,
+        header = coinPriceHeaderProvider.initialHeader
+    )
 
-    private fun createInitialUiState() = CoinType.values().map {
-        UpbitCoinModel(
-            type = it,
-            tradePrice = 0.0,
-            changeStatus = ChangeStatus.SAME,
-            accTradePricePerMillion = 0.0,
-            changeRate = 0.0,
-            changePrice = 0.0
-        )
-    }.let { CoinPriceUiState(it) }
-
-    private fun initialPriceMap() {
-        initialUiState
-            .coinPriceList
-            .forEach { coinPriceMap[it.type] = it }
-    }
-
-    fun updateAndCreateUiState(
-        upbitCoinModel: UpbitCoinModel
+    fun updatePrice(
+        upbitCoinModel: UpbitCoinModel,
     ): CoinPriceUiState {
-        coinPriceMap[upbitCoinModel.type] = upbitCoinModel
-        return CoinPriceUiState(
-            coinPriceList = coinPriceMap.map { it.value }.toList()
+        return lastUiState.updateAndCopy(
+            coinPriceList = coinPriceListProvider.updateAndGet(
+                upbitCoinModel = upbitCoinModel
+            )
         )
+    }
+
+    fun updateHeaderSort(
+        header: CoinPriceHeader,
+        sortType: SortType,
+    ): CoinPriceUiState {
+        return lastUiState.updateAndCopy(
+            header = coinPriceHeaderProvider.clickSort(
+                sortType = sortType,
+                header = header
+            )
+        )
+    }
+
+    fun updateHeaderDescription(
+        header: CoinPriceHeader,
+    ): CoinPriceUiState {
+        return lastUiState.updateAndCopy(header = coinPriceHeaderProvider.clickDescription(header))
+    }
+
+    private fun CoinPriceUiState.updateAndCopy(
+        header: CoinPriceHeader? = null,
+        coinPriceList: List<UpbitCoinModel>? = null
+    ): CoinPriceUiState {
+        return when {
+            header != null && coinPriceList == null -> lastUiState.copy(header = header)
+            header == null && coinPriceList != null -> lastUiState.copy(coinPriceList = coinPriceList)
+            header != null && coinPriceList != null -> lastUiState.copy(
+                header = header,
+                coinPriceList = coinPriceList
+            )
+            else -> throw IllegalAccessException()
+        }.also {
+            lastUiState = it
+        }
+
     }
 }

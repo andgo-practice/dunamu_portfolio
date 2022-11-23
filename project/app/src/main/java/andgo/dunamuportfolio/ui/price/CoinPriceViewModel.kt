@@ -25,11 +25,13 @@ class CoinPriceViewModel @Inject constructor(
         observeCoinPrice()
     }
 
+    private
+
     private fun observeCoinPrice() {
         viewModelScope.launch {
             getCoinPriceUseCase(Unit)
                 .mapNotNull { it.data }
-                .map(uiStateProvider::updateAndCreateUiState)
+                .map (uiStateProvider::updatePrice)
                 .collect { _uiState.emit(it) }
         }
     }

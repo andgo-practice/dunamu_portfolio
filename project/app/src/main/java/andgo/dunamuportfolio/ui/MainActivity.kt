@@ -2,7 +2,7 @@ package andgo.dunamuportfolio.ui
 
 import andgo.dunamuportfolio.domain.model.CoinPriceUnit
 import andgo.dunamuportfolio.domain.model.mockPriceList
-import andgo.dunamuportfolio.ui.price.CoinPriceSortMenuBar
+import andgo.dunamuportfolio.ui.price.CoinPriceHeaderItem
 import andgo.dunamuportfolio.ui.price.CoinPriceViewModel
 import andgo.dunamuportfolio.ui.theme.DunamuPortfolioTheme
 import android.os.Bundle
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Column {
-                        CoinPriceSortMenuBar(isKoreanMode = true)
+                        CoinPriceHeaderItem(isCoinDescriptionKorean = true)
                         CoinPriceList(
                             unit = CoinPriceUnit.KRW,
                             coinPriceList = viewModel.uiState.collectAsState().value.coinPriceList
@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
 fun MainActivityPreview() {
     DunamuPortfolioTheme {
         Column {
-            CoinPriceSortMenuBar(isKoreanMode = true)
+            CoinPriceHeaderItem(isCoinDescriptionKorean = true)
             CoinPriceList(
                 unit = CoinPriceUnit.KRW,
                 coinPriceList = mockPriceList
