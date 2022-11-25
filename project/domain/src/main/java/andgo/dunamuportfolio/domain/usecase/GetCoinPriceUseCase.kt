@@ -4,6 +4,7 @@ import andgo.dunamuportfolio.domain.UpbitRepository
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
 import andgo.dunamuportfolio.domain.usecase.core.FlowUseCase
 import andgo.dunamuportfolio.domain.usecase.core.Result
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,6 +15,9 @@ class GetCoinPriceUseCase @Inject constructor(
 ) :
     FlowUseCase<Unit, UpbitCoinModel>(Dispatchers.IO) {
     override fun execute(parameters: Unit): Flow<Result<UpbitCoinModel>> {
-        return upbitRepository.response.map { Result.Success(it) }
+        return upbitRepository.response.map {
+            Log.d("test", it.toString())
+            Result.Success(it)
+        }
     }
 }
