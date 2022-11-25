@@ -4,6 +4,7 @@ import andgo.dunamuportfolio.domain.model.CoinPriceUnit
 import andgo.dunamuportfolio.ui.price.CoinPriceHeaderItem
 import andgo.dunamuportfolio.ui.price.CoinPriceList
 import andgo.dunamuportfolio.ui.price.CoinPriceViewModel
+import andgo.dunamuportfolio.ui.price.CoinSearchBar
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -20,7 +21,13 @@ fun UpbitMain(viewModel: CoinPriceViewModel = viewModel()) {
         color = MaterialTheme.colors.background
     ) {
         Column {
+            CoinSearchBar(
+                text = viewModel.searchText.collectAsState().value,
+                onValueChanged = viewModel::onSearchTextChanged
+            )
+
             val header = viewModel.header.collectAsState().value
+
             CoinPriceHeaderItem(
                 header = header,
                 onClickSort = viewModel::onClickSortType,

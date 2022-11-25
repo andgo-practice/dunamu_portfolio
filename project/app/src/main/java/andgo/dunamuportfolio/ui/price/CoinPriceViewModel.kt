@@ -28,21 +28,20 @@ class CoinPriceViewModel @Inject constructor(
         requestCoinList()
     }
 
+    private val _searchText = MutableStateFlow(initialStateProvider.initialSearchText)
     private val _header = MutableStateFlow(initialStateProvider.initialHeader)
     private val _coinPriceMap = MutableStateFlow(initialStateProvider.initialCoinMap)
 
-
-    val header
-        get() = _header.asStateFlow()
-
+    val searchText get() = _searchText.asStateFlow()
+    val header get() = _header.asStateFlow()
     val coinPriceList: Flow<List<UpbitCoinModel>>
-        get() = combine(_header, _coinPriceMap) { header, priceMap ->
+        get() = combine(_searchText, _header, _coinPriceMap) { searchText, header, priceMap ->
             coinPriceListRetriever.create(
+                searchText = searchText,
                 priceMap = priceMap,
                 header = header
             )
         }
-
 
     private fun observeCoinPrice() {
         viewModelScope.launch {
@@ -81,6 +80,12 @@ class CoinPriceViewModel @Inject constructor(
                 if (it.sortType == sortType) it.copy(isSortDescending = it.isSortDescending.not())
                 else it.copy(sortType = sortType, isSortDescending = true)
             }
+        }
+    }
+
+    fun onSearchTextChanged(input: String) {
+        viewModelScope.launch {
+            _searchText.update { input }
         }
     }
 }
