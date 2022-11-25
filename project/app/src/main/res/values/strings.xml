@@ -9,6 +9,5 @@
     <string name="menu_coin_sort_rate">전일대비</string>
     <string name="menu_coin_sort_trade">거래대금</string>
 
-
-
+    <string name="search_hint">코인명/심볼검색</string>
 </resources>

@@ -8,6 +8,8 @@ import andgo.dunamuportfolio.ui.price.model.CoinPriceHeader
 import javax.inject.Inject
 
 class CoinInitialStateProvider @Inject constructor() {
+    val initialSearchText get() = ""
+
     val initialCoinMap
         get() = mutableMapOf<CoinType, UpbitCoinModel>().apply {
             CoinType.values().forEach {

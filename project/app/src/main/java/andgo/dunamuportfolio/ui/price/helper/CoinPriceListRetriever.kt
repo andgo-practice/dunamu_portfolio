@@ -8,10 +8,12 @@ import javax.inject.Inject
 
 class CoinPriceListRetriever @Inject constructor() {
     fun create(
+        searchText: String,
         priceMap: Map<CoinType, UpbitCoinModel>,
         header: CoinPriceHeader
     ) = priceMap
         .map { it.value }
+        .filter { it.isInSearch(searchText) }
         .sortedByDescending { coinModel ->
             when (header.sortType) {
                 SortType.PRICE -> coinModel.changePrice
@@ -19,5 +21,11 @@ class CoinPriceListRetriever @Inject constructor() {
                 SortType.TRADE -> coinModel.accTradePricePerMillion
             }.let { if (header.isSortDescending) it else -it }
         }
+}
 
+fun UpbitCoinModel.isInSearch(searchText: String): Boolean {
+    val lowerSearchText = searchText.lowercase()
+    return type.coinName.lowercase().contains(lowerSearchText)
+            || type.coinNameEng.lowercase().contains(lowerSearchText)
+            || type.coinCode.lowercase().contains(lowerSearchText)
 }
