@@ -8,6 +8,7 @@ import andgo.dunamuportfolio.data.service.*
 import andgo.dunamuportfolio.domain.UpbitRepository
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
 import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull

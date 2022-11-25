@@ -1,4 +1,4 @@
-package andgo.dunamuportfolio.ui
+package andgo.dunamuportfolio.ui.price
 
 import andgo.dunamuportfolio.domain.model.CoinPriceUnit
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
@@ -18,10 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.lang.Math.abs
 
 @Composable
 fun CoinPriceItem(
+    isDescriptionKorean: Boolean,
     unit: CoinPriceUnit,
     coin: UpbitCoinModel,
     modifier: Modifier = Modifier
@@ -35,7 +35,7 @@ fun CoinPriceItem(
 
         Column(modifier = Modifier.weight(2f)) {
             Text(
-                text = coin.type.coinName,
+                text = if (isDescriptionKorean) coin.type.coinName else coin.type.coinNameEng,
                 style = TextStyle(fontSize = 13.sp)
             )
             Text(
@@ -112,6 +112,7 @@ private fun getColor(diff: Double): Color {
 @Preview
 fun CoinPriceItemPreview() {
     CoinPriceItem(
+        isDescriptionKorean = true,
         unit = CoinPriceUnit.KRW,
         coin = mockPriceList[0],
         modifier = Modifier.background(Color.White)

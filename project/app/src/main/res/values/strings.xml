@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">DunamuPortfolio</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="menu_coin_korean">한글명</string>
+    <string name="menu_coin_english">영문명</string>
+
+    <string name="menu_coin_sort_price">현재가</string>
+    <string name="menu_coin_sort_rate">전일대비</string>
+    <string name="menu_coin_sort_trade">거래대금</string>
+
+
+
 </resources>
