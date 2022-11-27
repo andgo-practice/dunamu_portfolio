@@ -1,13 +1,14 @@
 package andgo.dunamuportfolio.data.di
 
-import andgo.dunamuportfolio.data.UpbitRepositoryImpl
-import andgo.dunamuportfolio.data.service.UpbitRemote
-import andgo.dunamuportfolio.data.service.UpbitRemoteImpl
-import andgo.dunamuportfolio.data.service.UpbitRequestAdapter
-import andgo.dunamuportfolio.data.service.UpbitService
-import andgo.dunamuportfolio.data.util.ScarletUpbitServiceProvider
+import andgo.dunamuportfolio.data.repository.UpbitRepositoryImpl
+import andgo.dunamuportfolio.data.remote.UpbitWebServiceProvider
+import andgo.dunamuportfolio.data.remote.UpbitRemote
+import andgo.dunamuportfolio.data.remote.UpbitRemoteImpl
+import andgo.dunamuportfolio.data.remote.service.UpbitRequestAdapter
+import andgo.dunamuportfolio.data.remote.service.UpbitService
+import andgo.dunamuportfolio.data.remote.service.UpbitServiceImpl
+import andgo.dunamuportfolio.data.remote.service.websocket.UpbitWebSocketHandler
 import andgo.dunamuportfolio.domain.UpbitRepository
-import android.app.Application
 import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Binds
@@ -15,6 +16,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -27,15 +31,26 @@ internal interface DataModule {
     @get:Binds
     val UpbitRepositoryImpl.upbitRepository: UpbitRepository
 
+    @get:[Binds Singleton]
+    val DefaultAsyncDispatcher.dispatcher: AsyncDispatcher
+
     companion object {
         @[Provides Singleton]
-        fun provideScarlet(
-            application: Application,
+        fun provideUpbitImpl(
+            upbitOkHttpClientProvider: UpbitWebServiceProvider,
             moshi: Moshi
-        ): UpbitService = ScarletUpbitServiceProvider(
-            application = application,
-            moshi = moshi
-        ).create()
+        ): UpbitService = UpbitServiceImpl(
+            UpbitWebSocketHandler(
+                moshi,
+                upbitOkHttpClientProvider.client(),
+                upbitOkHttpClientProvider.webSocketHandler(moshi, externalScope())
+            )
+        )
+
+        @[Provides Singleton]
+        fun externalScope(): CoroutineScope {
+            return CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        }
 
         @[Provides Singleton]
         fun moshi(): Moshi = Moshi.Builder()

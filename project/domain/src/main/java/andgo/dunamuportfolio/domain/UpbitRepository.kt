@@ -1,12 +1,11 @@
 package andgo.dunamuportfolio.domain
 
-import andgo.dunamuportfolio.domain.model.UpbitCoinModel
+import andgo.dunamuportfolio.domain.model.UpbitWebSocketEvent
 import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
 import kotlinx.coroutines.flow.Flow
 
 interface UpbitRepository {
-    val response: Flow<UpbitCoinModel>
-    val event: Flow<String>
+    fun connect(): Flow<UpbitWebSocketEvent>
+    fun disconnect()
     fun subscribe(coinSubscribeParam: CoinSubscribeParam)
-    fun unSubscribe()
 }

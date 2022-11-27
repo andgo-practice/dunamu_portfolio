@@ -2,7 +2,7 @@ package andgo.dunamuportfolio.ui.price
 
 import andgo.dunamuportfolio.domain.model.*
 import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
-import andgo.dunamuportfolio.domain.usecase.GetCoinPriceUseCase
+import andgo.dunamuportfolio.domain.usecase.ConnectWebSocketUseCase
 import andgo.dunamuportfolio.domain.usecase.SubscribeCoinUseCase
 import andgo.dunamuportfolio.domain.usecase.core.data
 import andgo.dunamuportfolio.ui.price.helper.CoinInitialStateProvider
@@ -10,23 +10,19 @@ import andgo.dunamuportfolio.ui.price.helper.CoinPriceListRetriever
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CoinPriceViewModel @Inject constructor(
-    private val getCoinPriceUseCase: GetCoinPriceUseCase,
     private val subscribeCoinUseCase: SubscribeCoinUseCase,
     private val coinPriceListRetriever: CoinPriceListRetriever,
+    private val connectWebSocketUseCase: ConnectWebSocketUseCase,
     initialStateProvider: CoinInitialStateProvider
 ) : ViewModel() {
 
-    init {
-        observeCoinPrice()
-        requestCoinList()
-    }
+    init { connectWebSocket() }
 
     private val _searchText = MutableStateFlow(initialStateProvider.initialSearchText)
     private val _header = MutableStateFlow(initialStateProvider.initialHeader)
@@ -43,22 +39,30 @@ class CoinPriceViewModel @Inject constructor(
             )
         }
 
-    private fun observeCoinPrice() {
-        viewModelScope.launch {
-            getCoinPriceUseCase(Unit)
-                .mapNotNull { it.data }
-                .collect { upbitModel ->
-                    _coinPriceMap.update {
-                        it.toMutableMap().apply { this[upbitModel.type] = upbitModel }
-                    }
+
+    private fun connectWebSocket() {
+        connectWebSocketUseCase(Unit)
+            .mapNotNull{ it.data }
+            .onEach {
+                when (it) {
+                    is UpbitWebSocketEvent.ConnectionOpened -> requestCoinList()
+                    is UpbitWebSocketEvent.MessageReceived -> updateCoinPriceModel(it.model)
+                    else -> Unit
                 }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun updateCoinPriceModel(upbitModel: UpbitCoinModel?) {
+        if (upbitModel == null) return
+
+        _coinPriceMap.update {
+            it.toMutableMap().apply { this[upbitModel.type] = upbitModel }
         }
     }
 
     private fun requestCoinList() {
         viewModelScope.launch {
-            delay(5000) // TODO websocketEvent가 오기전까진 delay로 대응
-
             subscribeCoinUseCase(
                 CoinSubscribeParam(
                     coinTypeParams = CoinType.values().toList(),
