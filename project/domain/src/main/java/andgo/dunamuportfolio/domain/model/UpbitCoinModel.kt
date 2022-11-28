@@ -1,5 +1,8 @@
 package andgo.dunamuportfolio.domain.model
 
+import androidx.compose.runtime.Stable
+
+@Stable
 data class UpbitCoinModel(
     val type: CoinType,
     val tradePrice: Double,
@@ -9,6 +12,7 @@ data class UpbitCoinModel(
     val changeStatus: ChangeStatus
 )
 
+@Stable
 enum class ChangeStatus {
     UP, SAME, DOWN
 }

@@ -1,5 +1,8 @@
 package andgo.dunamuportfolio.domain.model
 
+import androidx.compose.runtime.Stable
+
+@Stable
 enum class CoinType(
     val coinCode: String,
     val coinName: String,

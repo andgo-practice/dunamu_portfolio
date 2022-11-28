@@ -58,15 +58,7 @@ class MainActivity : ComponentActivity() {
 fun MainActivityPreview() {
     DunamuPortfolioTheme {
         Column {
-            CoinPriceHeaderItem(
-                header = CoinPriceHeader(false, SortType.TRADE, false),
-                onClickSort = {},
-                onClickDescription = {})
-            CoinPriceList(
-                isDescriptionKorean = true,
-                unit = CoinPriceUnit.KRW,
-                coinPriceList = mockPriceList
-            )
+            UpbitMain()
         }
     }
 }
