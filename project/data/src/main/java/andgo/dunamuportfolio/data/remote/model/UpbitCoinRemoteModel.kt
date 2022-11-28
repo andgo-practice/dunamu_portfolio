@@ -1,4 +1,4 @@
-package andgo.dunamuportfolio.data.model
+package andgo.dunamuportfolio.data.remote.model
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

@@ -16,6 +16,6 @@ class SubscribeCoinUseCase @Inject constructor(
 }
 
 data class CoinSubscribeParam(
-    val coinTypeParams: List<CoinType>,
+    val coinTypeList: List<CoinType>,
     val coinPriceUnit: CoinPriceUnit
 )

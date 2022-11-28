@@ -1,4 +1,4 @@
-package andgo.dunamuportfolio.data.service
+package andgo.dunamuportfolio.data.model
 
 enum class SubscribeRequestType(val value: String) {
     Ticker("ticker")

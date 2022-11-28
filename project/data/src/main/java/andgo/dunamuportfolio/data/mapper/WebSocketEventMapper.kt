@@ -1,20 +1,17 @@
 package andgo.dunamuportfolio.data.mapper
 
-import andgo.dunamuportfolio.data.model.WebSocketEvent
-import android.util.Log
-import com.tinder.scarlet.WebSocket
+import andgo.dunamuportfolio.data.remote.model.WebSocketEvent
+import andgo.dunamuportfolio.domain.model.UpbitWebSocketEvent
 import javax.inject.Inject
 
-// TODO 이벤트가 일로 안오는 이슈가 있어서 확인이 필요함.
-internal class WebSocketEventMapper @Inject constructor() {
-    fun toSocketEvent(event: WebSocket.Event): WebSocketEvent {
-        Log.d("test", event.toString())
+class WebSocketEventMapper @Inject constructor() {
+    fun map(event: WebSocketEvent): UpbitWebSocketEvent {
         return when (event) {
-            is WebSocket.Event.OnConnectionOpened<*> -> WebSocketEvent.ConnectionOpened
-            is WebSocket.Event.OnMessageReceived -> WebSocketEvent.MessageReceived
-            is WebSocket.Event.OnConnectionClosing -> WebSocketEvent.ConnectionClosing(cause = event.shutdownReason.reason)
-            is WebSocket.Event.OnConnectionClosed -> WebSocketEvent.ConnectionClosed(cause = event.shutdownReason.reason)
-            is WebSocket.Event.OnConnectionFailed -> WebSocketEvent.ConnectionFailed(error = event.throwable)
+            is WebSocketEvent.ConnectionClosed -> UpbitWebSocketEvent.ConnectionClosed(event.cause)
+            is WebSocketEvent.ConnectionClosing -> UpbitWebSocketEvent.ConnectionClosing(event.cause)
+            is WebSocketEvent.ConnectionFailed -> UpbitWebSocketEvent.ConnectionFailed(event.error)
+            WebSocketEvent.ConnectionOpened -> UpbitWebSocketEvent.ConnectionOpened
+            is WebSocketEvent.MessageReceived -> UpbitWebSocketEvent.MessageReceived(event.model.toUpbitCoinModel())
         }
     }
 }

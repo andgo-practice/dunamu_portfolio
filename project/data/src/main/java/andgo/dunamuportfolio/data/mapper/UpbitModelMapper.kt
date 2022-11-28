@@ -1,6 +1,6 @@
 package andgo.dunamuportfolio.data.mapper
 
-import andgo.dunamuportfolio.data.model.UpbitCoinRemoteModel
+import andgo.dunamuportfolio.data.remote.model.UpbitCoinRemoteModel
 import andgo.dunamuportfolio.domain.model.ChangeStatus
 import andgo.dunamuportfolio.domain.model.CoinType
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
