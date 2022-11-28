@@ -12,7 +12,7 @@ internal interface UpbitService {
 
     fun connect(): Flow<WebSocketEvent>
 
-    fun disconnect()
-
     fun subscribe(params: List<Any>)
+
+    fun disconnect()
 }

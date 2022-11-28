@@ -14,9 +14,9 @@ class UpbitWebSocketHandler(
     private val okHttpClient: OkHttpClient,
     private val webSocketHandler: UpbitWebSocketListener
 ) {
-    private var webSocket: WebSocket? = null
-
     val event get() = webSocketHandler.socketEventChannel
+
+    private var webSocket: WebSocket? = null
 
     fun connect(): Flow<WebSocketEvent> {
         webSocket?.cancel()
@@ -28,11 +28,11 @@ class UpbitWebSocketHandler(
         return webSocketHandler.socketEventChannel.receiveAsFlow()
     }
 
-    fun cancel() = webSocket?.cancel()
-
     fun send(params: List<Any>) {
         moshi.adapter(List::class.java).toJson(params)?.let {
             webSocket?.send(it)
         }
     }
+
+    fun cancel() = webSocket?.cancel()
 }

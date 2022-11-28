@@ -3,6 +3,7 @@ package andgo.dunamuportfolio.ui.price
 import andgo.dunamuportfolio.domain.model.*
 import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
 import andgo.dunamuportfolio.domain.usecase.ConnectWebSocketUseCase
+import andgo.dunamuportfolio.domain.usecase.DisConnectWebSocketUseCase
 import andgo.dunamuportfolio.domain.usecase.SubscribeCoinUseCase
 import andgo.dunamuportfolio.domain.usecase.core.data
 import andgo.dunamuportfolio.ui.price.helper.CoinInitialStateProvider
@@ -19,10 +20,9 @@ class CoinPriceViewModel @Inject constructor(
     private val subscribeCoinUseCase: SubscribeCoinUseCase,
     private val coinPriceListRetriever: CoinPriceListRetriever,
     private val connectWebSocketUseCase: ConnectWebSocketUseCase,
+    private val disConnectWebSocketUseCase: DisConnectWebSocketUseCase,
     initialStateProvider: CoinInitialStateProvider
 ) : ViewModel() {
-
-    init { connectWebSocket() }
 
     private val _searchText = MutableStateFlow(initialStateProvider.initialSearchText)
     private val _header = MutableStateFlow(initialStateProvider.initialHeader)
@@ -40,17 +40,19 @@ class CoinPriceViewModel @Inject constructor(
         }
 
 
-    private fun connectWebSocket() {
-        connectWebSocketUseCase(Unit)
-            .mapNotNull{ it.data }
-            .onEach {
-                when (it) {
-                    is UpbitWebSocketEvent.ConnectionOpened -> requestCoinList()
-                    is UpbitWebSocketEvent.MessageReceived -> updateCoinPriceModel(it.model)
-                    else -> Unit
-                }
+    suspend fun connect() = connectWebSocketUseCase(Unit)
+        .mapNotNull { it.data }
+        .onEach {
+            when (it) {
+                is UpbitWebSocketEvent.ConnectionOpened -> subscribeCoinList()
+                is UpbitWebSocketEvent.MessageReceived -> updateCoinPriceModel(it.model)
+                else -> Unit
             }
-            .launchIn(viewModelScope)
+        }
+        .collect()
+
+    fun disconnect() {
+        viewModelScope.launch { disConnectWebSocketUseCase(Unit) }
     }
 
     private fun updateCoinPriceModel(upbitModel: UpbitCoinModel?) {
@@ -61,11 +63,11 @@ class CoinPriceViewModel @Inject constructor(
         }
     }
 
-    private fun requestCoinList() {
+    private fun subscribeCoinList() {
         viewModelScope.launch {
             subscribeCoinUseCase(
                 CoinSubscribeParam(
-                    coinTypeParams = CoinType.values().toList(),
+                    coinTypeList = CoinType.values().toList(),
                     coinPriceUnit = CoinPriceUnit.KRW
                 )
             )

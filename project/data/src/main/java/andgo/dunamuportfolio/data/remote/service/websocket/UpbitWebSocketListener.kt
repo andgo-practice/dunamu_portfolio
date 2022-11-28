@@ -22,6 +22,7 @@ class UpbitWebSocketListener @Inject constructor(
     val socketEventChannel = Channel<WebSocketEvent>(RENDEZVOUS)
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
+        Log.d("UpbitWebSocketListener", "onOpen")
         coroutineScope.launch {
             socketEventChannel.send(WebSocketEvent.ConnectionOpened)
         }
@@ -31,13 +32,14 @@ class UpbitWebSocketListener @Inject constructor(
         coroutineScope.launch {
             moshi.adapter(UpbitCoinRemoteModel::class.java).fromJson(bytes.utf8())
                 ?.let {
-                    Log.d("test", "onMessage:$it")
+                    Log.d("UpbitWebSocketListener", "onMessage:$it")
                     socketEventChannel.send(WebSocketEvent.MessageReceived(it))
                 }
         }
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        Log.d("UpbitWebSocketListener", "onClosed")
         coroutineScope.launch {
             socketEventChannel.send(WebSocketEvent.ConnectionClosed(reason))
         }
@@ -46,6 +48,7 @@ class UpbitWebSocketListener @Inject constructor(
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        Log.d("UpbitWebSocketListener", "onFailure")
         coroutineScope.launch {
             socketEventChannel.send(WebSocketEvent.ConnectionFailed(t))
         }

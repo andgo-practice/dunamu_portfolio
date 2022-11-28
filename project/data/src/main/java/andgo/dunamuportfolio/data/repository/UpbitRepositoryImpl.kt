@@ -1,10 +1,11 @@
 package andgo.dunamuportfolio.data.repository
 
 import andgo.dunamuportfolio.data.mapper.WebSocketEventMapper
-import andgo.dunamuportfolio.data.model.*
-import andgo.dunamuportfolio.data.remote.UpbitRemote
+import andgo.dunamuportfolio.data.model.SubscribeData
 import andgo.dunamuportfolio.data.model.SubscribeRequestType
-import andgo.dunamuportfolio.data.model.toCoinUnitRemote
+import andgo.dunamuportfolio.data.model.Ticket
+import andgo.dunamuportfolio.data.model.Type
+import andgo.dunamuportfolio.data.remote.UpbitRemote
 import andgo.dunamuportfolio.domain.UpbitRepository
 import andgo.dunamuportfolio.domain.model.UpbitWebSocketEvent
 import andgo.dunamuportfolio.domain.usecase.CoinSubscribeParam
@@ -32,9 +33,10 @@ class UpbitRepositoryImpl @Inject constructor(
                 ticket = Ticket(ticket = UUID.randomUUID().toString()),
                 type = Type(
                     type = SubscribeRequestType.Ticker.value,
-                    codes = coinSubscribeParam.coinTypeParams
-                        .map { it.toCoinTypeRemote() }
-                        .toRequestParams(coinSubscribeParam.coinPriceUnit.toCoinUnitRemote())
+                    codes = coinSubscribeParam.coinTypeList
+                        .asSequence()
+                        .map { "${coinSubscribeParam.coinPriceUnit}-${it.coinCode}" }
+                        .toList()
                 )
             )
         )
