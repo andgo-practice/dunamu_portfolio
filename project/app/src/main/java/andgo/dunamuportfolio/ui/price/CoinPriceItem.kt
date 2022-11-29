@@ -3,6 +3,7 @@ package andgo.dunamuportfolio.ui.price
 import andgo.dunamuportfolio.domain.model.CoinPriceUnit
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
 import andgo.dunamuportfolio.domain.model.mockPriceList
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,8 @@ fun CoinPriceItem(
     coin: UpbitCoinModel,
     modifier: Modifier = Modifier
 ) {
+    Log.d("Test", "task:${coin.type} composition")
+
     Row(
         modifier = modifier
             .fillMaxWidth()

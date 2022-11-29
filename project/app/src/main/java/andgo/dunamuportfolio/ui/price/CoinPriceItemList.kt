@@ -3,7 +3,6 @@ package andgo.dunamuportfolio.ui.price
 import andgo.dunamuportfolio.domain.model.CoinPriceUnit
 import andgo.dunamuportfolio.domain.model.UpbitCoinModel
 import andgo.dunamuportfolio.domain.model.mockPriceList
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,18 +18,15 @@ fun CoinPriceList(
     isDescriptionKorean: Boolean,
     unit: CoinPriceUnit,
     modifier: Modifier = Modifier,
-    coinPriceList: List<UpbitCoinModel>
+    coinList: List<UpbitCoinModel>
 ) {
     LazyColumn(
         modifier = modifier
     ) {
         items(
-            items = coinPriceList,
+            items = coinList,
             key = { coinModel -> coinModel.type }
         ) { task ->
-
-            // TODO recomposition 개선해야합니다.
-            Log.d("Test", "task:${task.type.ordinal} composition")
             CoinPriceItem(
                 isDescriptionKorean = isDescriptionKorean,
                 unit = unit,
@@ -49,6 +45,6 @@ fun CoinPriceListPreview() {
         isDescriptionKorean = true,
         modifier = Modifier.background(color = Color.White),
         unit = CoinPriceUnit.KRW,
-        coinPriceList = mockPriceList
+        coinList = mockPriceList
     )
 }

@@ -11,22 +11,26 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun UpbitMain(viewModel: CoinPriceViewModel = viewModel()) {
+
+    val text by viewModel.searchText.collectAsState()
+    val header by viewModel.header.collectAsState()
+    val coinList by viewModel.coinPriceList.collectAsState(listOf())
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
         Column {
             CoinSearchBar(
-                text = viewModel.searchText.collectAsState().value,
+                text = text,
                 onValueChanged = viewModel::onSearchTextChanged
             )
-
-            val header = viewModel.header.collectAsState().value
 
             CoinPriceHeaderItem(
                 header = header,
@@ -36,7 +40,7 @@ fun UpbitMain(viewModel: CoinPriceViewModel = viewModel()) {
             CoinPriceList(
                 isDescriptionKorean = header.isCoinDescriptionKorean,
                 unit = CoinPriceUnit.KRW,
-                coinPriceList = viewModel.coinPriceList.collectAsState(listOf()).value
+                coinList = coinList
             )
         }
     }
