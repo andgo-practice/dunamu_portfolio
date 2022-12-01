@@ -24,10 +24,4 @@ class UpbitWebServiceProvider @Inject constructor() {
             .addInterceptor(logger)
             .build()
     }
-
-    fun webSocketHandler(
-        moshi: Moshi,
-        coroutineScope: CoroutineScope
-    ) = UpbitWebSocketListener(moshi, coroutineScope)
-
 }

@@ -8,13 +8,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
+import javax.inject.Inject
 
-class UpbitWebSocketHandler(
+class UpbitWebSocketHandler @Inject constructor(
     private val moshi: Moshi,
     private val okHttpClient: OkHttpClient,
-    private val webSocketHandler: UpbitWebSocketListener
+    private val webSocketListener: UpbitWebSocketListener
 ) {
-    val event get() = webSocketHandler.socketEventChannel
+    val event get() = webSocketListener.socketEventChannel
 
     private var webSocket: WebSocket? = null
 
@@ -22,10 +23,10 @@ class UpbitWebSocketHandler(
         webSocket?.cancel()
         webSocket = okHttpClient.newWebSocket(
             Request.Builder().url(BuildConfig.SOCKET_ADDRESS).build(),
-            webSocketHandler
+            webSocketListener
         )
 
-        return webSocketHandler.socketEventChannel.receiveAsFlow()
+        return webSocketListener.socketEventChannel.receiveAsFlow()
     }
 
     fun send(params: List<Any>) {
