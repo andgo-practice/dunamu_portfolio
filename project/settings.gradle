@@ -16,3 +16,4 @@ rootProject.name = "DunamuPortfolio"
 include ':app'
 include ':domain'
 include ':data'
+include ':feature-coinprice'
