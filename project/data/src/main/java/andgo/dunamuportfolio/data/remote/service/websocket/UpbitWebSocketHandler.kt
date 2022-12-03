@@ -1,6 +1,7 @@
 package andgo.dunamuportfolio.data.remote.service.websocket
 
 import andgo.dunamuportfolio.data.BuildConfig
+import andgo.dunamuportfolio.data.model.UpbitRequestParam
 import andgo.dunamuportfolio.data.remote.model.WebSocketEvent
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +30,7 @@ class UpbitWebSocketHandler @Inject constructor(
         return webSocketListener.socketEventChannel.receiveAsFlow()
     }
 
-    fun send(params: List<Any>) {
+    fun send(params: List<UpbitRequestParam>) {
         moshi.adapter(List::class.java).toJson(params)?.let {
             webSocket?.send(it)
         }

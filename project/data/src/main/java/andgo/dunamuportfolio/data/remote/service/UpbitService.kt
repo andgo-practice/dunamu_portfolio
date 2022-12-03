@@ -1,5 +1,6 @@
 package andgo.dunamuportfolio.data.remote.service
 
+import andgo.dunamuportfolio.data.model.UpbitRequestParam
 import andgo.dunamuportfolio.data.remote.model.UpbitCoinRemoteModel
 import andgo.dunamuportfolio.data.remote.model.WebSocketEvent
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +13,7 @@ internal interface UpbitService {
 
     fun connect(): Flow<WebSocketEvent>
 
-    fun subscribe(params: List<Any>)
+    fun subscribe(params: List<UpbitRequestParam>)
 
     fun disconnect()
 }
