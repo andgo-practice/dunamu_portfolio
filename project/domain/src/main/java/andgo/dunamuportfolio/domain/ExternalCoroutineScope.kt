@@ -1,4 +1,4 @@
-package andgo.dunamuportfolio.domain.di
+package andgo.dunamuportfolio.domain
 
 import kotlinx.coroutines.CoroutineScope
 
