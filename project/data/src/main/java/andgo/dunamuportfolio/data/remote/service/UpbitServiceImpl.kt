@@ -1,5 +1,6 @@
 package andgo.dunamuportfolio.data.remote.service
 
+import andgo.dunamuportfolio.data.model.UpbitRequestParam
 import andgo.dunamuportfolio.data.remote.model.UpbitCoinRemoteModel
 import andgo.dunamuportfolio.data.remote.model.WebSocketEvent
 import andgo.dunamuportfolio.data.remote.service.websocket.UpbitWebSocketHandler
@@ -26,7 +27,7 @@ class UpbitServiceImpl @Inject constructor(
         upbitWebSocketHandler.cancel()
     }
 
-    override fun subscribe(params: List<Any>) {
+    override fun subscribe(params: List<UpbitRequestParam>) {
         upbitWebSocketHandler.send(params)
     }
 }

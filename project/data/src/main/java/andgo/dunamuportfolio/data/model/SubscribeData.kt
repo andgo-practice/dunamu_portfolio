@@ -9,14 +9,15 @@ interface UpbitRequestParam
 data class SubscribeData(
     val params: List<UpbitRequestParam>
 ) {
-    companion object {
-        fun create(
-            ticket: Ticket,
-            type: Type
-        ) = SubscribeData(listOf(type, ticket))
+    class Factory {
+        companion object {
+            fun create(
+                ticket: Ticket,
+                type: Type
+            ) = SubscribeData(listOf(type, ticket))
+        }
     }
 }
-
 
 @JsonClass(generateAdapter = true)
 data class Ticket(

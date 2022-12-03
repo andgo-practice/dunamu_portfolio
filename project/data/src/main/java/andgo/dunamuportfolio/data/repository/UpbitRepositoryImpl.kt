@@ -29,7 +29,7 @@ class UpbitRepositoryImpl @Inject constructor(
 
     override fun subscribe(coinSubscribeParam: CoinSubscribeParam) {
         upbitRemote.subscribe(
-            SubscribeData.create(
+            SubscribeData.Factory.create(
                 ticket = Ticket(ticket = UUID.randomUUID().toString()),
                 type = Type(
                     type = SubscribeRequestType.Ticker.value,
